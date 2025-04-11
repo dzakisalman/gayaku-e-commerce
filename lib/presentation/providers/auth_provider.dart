@@ -9,6 +9,7 @@ class AuthProvider extends GetxController {
   final displayName = ''.obs;
   final photoURL = ''.obs;
   final email = ''.obs;
+  final error = ''.obs;
 
   @override
   void onInit() {
@@ -143,33 +144,17 @@ class AuthProvider extends GetxController {
     }
   }
 
-  Future<void> updateProfile({
-    String? newDisplayName,
-    String? newPhotoURL,
-  }) async {
+  Future<void> updateProfile({required String newDisplayName}) async {
     try {
       isLoading.value = true;
-      await currentUser.value?.updateDisplayName(newDisplayName);
-      await currentUser.value?.updatePhotoURL(newPhotoURL);
-      
-      displayName.value = newDisplayName ?? displayName.value;
-      photoURL.value = newPhotoURL ?? photoURL.value;
-
-      Get.snackbar(
-        'Berhasil',
-        'Profil berhasil diperbarui',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
-      );
+      await _auth.currentUser?.updateDisplayName(newDisplayName);
+      // Refresh current user data
+      final user = _auth.currentUser;
+      currentUser.value = user;
+      update();
     } catch (e) {
-      Get.snackbar(
-        'Error',
-        'Gagal memperbarui profil. Silakan coba lagi.',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
+      error.value = e.toString();
+      rethrow;
     } finally {
       isLoading.value = false;
     }

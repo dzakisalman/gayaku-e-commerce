@@ -1,64 +1,78 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:gayaku/core/theme/app_colors.dart';
-import 'package:gayaku/core/theme/app_text_styles.dart';
-import 'package:gayaku/presentation/providers/auth_provider.dart';
+import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../providers/auth_provider.dart';
+import '../../routes/routes.dart';
 
 class ProfilePage extends StatelessWidget {
+  ProfilePage({super.key});
+
   final _authProvider = Get.find<AuthProvider>();
   final _nameController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
-  ProfilePage({super.key}) {
-    final user = _authProvider.currentUser.value;
-    _nameController.text = user?.displayName ?? '';
-  }
-
   @override
   Widget build(BuildContext context) {
+    final user = _authProvider.currentUser.value;
+    _nameController.text = user?.displayName ?? '';
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Profile'),
       ),
       body: GetBuilder<AuthProvider>(
         builder: (controller) {
-          final user = controller.currentUser.value;
-          
+          final currentUser = controller.currentUser.value;
           return SingleChildScrollView(
             padding: const EdgeInsets.all(16),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Center(
-                  child: Stack(
-                    children: [
-                      CircleAvatar(
-                        radius: 50,
-                        backgroundColor: Colors.grey[300],
-                        backgroundImage: user?.photoURL != null
-                            ? NetworkImage(user?.photoURL ?? '')
-                            : null,
-                        child: user?.photoURL == null
-                            ? Text(
-                                (user?.displayName ?? 'U')[0].toUpperCase(),
-                                style: const TextStyle(
-                                  fontSize: 32,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              )
-                            : null,
-                      ),
-                    ],
-                  ),
-                ),
                 const SizedBox(height: 24),
+                CircleAvatar(
+                  radius: 50,
+                  backgroundColor: AppColors.primary,
+                  child: currentUser?.photoURL != null
+                      ? ClipOval(
+                          child: Image.network(
+                            currentUser!.photoURL!,
+                            width: 100,
+                            height: 100,
+                            fit: BoxFit.cover,
+                          ),
+                        )
+                      : Text(
+                          currentUser?.displayName?.substring(0, 1).toUpperCase() ?? 'G',
+                          style: AppTextStyles.heading1.copyWith(
+                            color: Colors.white,
+                          ),
+                        ),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  currentUser?.displayName ?? 'Guest',
+                  style: AppTextStyles.heading2,
+                ),
+                Text(
+                  currentUser?.email ?? '',
+                  style: AppTextStyles.body1,
+                ),
+                const SizedBox(height: 32),
                 Form(
                   key: _formKey,
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      Text(
+                        'Edit Profile',
+                        style: AppTextStyles.subtitle1,
+                      ),
+                      const SizedBox(height: 16),
                       TextFormField(
                         controller: _nameController,
                         decoration: const InputDecoration(
-                          labelText: 'Display Name',
+                          labelText: 'Name',
                           border: OutlineInputBorder(),
                         ),
                         validator: (value) {
@@ -69,49 +83,53 @@ class ProfilePage extends StatelessWidget {
                         },
                       ),
                       const SizedBox(height: 16),
-                      TextFormField(
-                        initialValue: user?.email ?? 'No email',
-                        readOnly: true,
-                        decoration: const InputDecoration(
-                          labelText: 'Email',
-                          border: OutlineInputBorder(),
-                        ),
-                      ),
-                      const SizedBox(height: 24),
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
-                          onPressed: controller.isLoading.value
-                              ? null
-                              : () async {
-                                  if (_formKey.currentState!.validate()) {
-                                    await controller.updateProfile(
-                                      newDisplayName: _nameController.text,
-                                    );
-                                  }
-                                },
-                          child: controller.isLoading.value
-                              ? const SizedBox(
-                                  height: 20,
-                                  width: 20,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                  ),
-                                )
-                              : const Text('Save Changes'),
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      SizedBox(
-                        width: double.infinity,
-                        child: OutlinedButton(
-                          onPressed: controller.isLoading.value
-                              ? null
-                              : () => controller.logout(),
-                          child: const Text('Logout'),
+                          onPressed: () async {
+                            if (_formKey.currentState!.validate()) {
+                              try {
+                                await controller.updateProfile(newDisplayName: _nameController.text);
+                                Get.snackbar(
+                                  'Success',
+                                  'Profile updated successfully',
+                                  snackPosition: SnackPosition.BOTTOM,
+                                );
+                              } catch (e) {
+                                Get.snackbar(
+                                  'Error',
+                                  'Failed to update profile',
+                                  snackPosition: SnackPosition.BOTTOM,
+                                );
+                              }
+                            }
+                          },
+                          child: const Text('Save Changes'),
                         ),
                       ),
                     ],
+                  ),
+                ),
+                const SizedBox(height: 32),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      try {
+                        await controller.logout();
+                        Get.offAllNamed(Routes.HOME);
+                      } catch (e) {
+                        Get.snackbar(
+                          'Error',
+                          'Failed to sign out',
+                          snackPosition: SnackPosition.BOTTOM,
+                        );
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                    ),
+                    child: const Text('Sign Out'),
                   ),
                 ),
               ],
