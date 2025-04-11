@@ -14,36 +14,57 @@ class CartPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Keranjang'),
+        title: const Text('Cart'),
       ),
-      body: Obx(() {
-        if (_cartProvider.items.isEmpty) {
-          return const Center(
-            child: Text('Keranjang kosong'),
-          );
-        }
-
-        return Column(
-          children: [
-            Expanded(
-              child: ListView.builder(
-                padding: const EdgeInsets.all(16),
-                itemCount: _cartProvider.items.length,
-                itemBuilder: (context, index) {
-                  final product = _cartProvider.items[index];
-                  final quantity = _cartProvider.getQuantity(product);
-                  return _buildCartItem(product, quantity);
-                },
+      body: GetBuilder<CartProvider>(
+        builder: (controller) {
+          if (controller.items.isEmpty) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(
+                    Icons.shopping_cart_outlined,
+                    size: 64,
+                    color: Colors.grey,
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Your cart is empty',
+                    style: AppTextStyles.subtitle1.copyWith(color: Colors.grey),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Add some products to your cart',
+                    style: AppTextStyles.body2.copyWith(color: Colors.grey),
+                  ),
+                ],
               ),
-            ),
-            _buildTotalSection(),
-          ],
-        );
-      }),
+            );
+          }
+
+          return Column(
+            children: [
+              Expanded(
+                child: ListView.builder(
+                  padding: const EdgeInsets.all(16),
+                  itemCount: controller.items.length,
+                  itemBuilder: (context, index) {
+                    final product = controller.items[index];
+                    return _buildCartItem(product, controller);
+                  },
+                ),
+              ),
+              _buildTotalSection(controller),
+            ],
+          );
+        },
+      ),
     );
   }
 
-  Widget _buildCartItem(ProductModel product, int quantity) {
+  Widget _buildCartItem(ProductModel product, CartProvider controller) {
+    final quantity = controller.getQuantity(product);
     return Card(
       margin: const EdgeInsets.only(bottom: 16),
       child: Padding(
@@ -85,7 +106,7 @@ class CartPage extends StatelessWidget {
               children: [
                 IconButton(
                   icon: const Icon(Icons.remove),
-                  onPressed: () => _cartProvider.updateQuantity(
+                  onPressed: () => controller.updateQuantity(
                     product,
                     quantity - 1,
                   ),
@@ -96,14 +117,14 @@ class CartPage extends StatelessWidget {
                 ),
                 IconButton(
                   icon: const Icon(Icons.add),
-                  onPressed: () => _cartProvider.updateQuantity(
+                  onPressed: () => controller.updateQuantity(
                     product,
                     quantity + 1,
                   ),
                 ),
                 IconButton(
                   icon: const Icon(Icons.delete_outline),
-                  onPressed: () => _cartProvider.removeFromCart(product),
+                  onPressed: () => controller.removeFromCart(product),
                 ),
               ],
             ),
@@ -113,7 +134,7 @@ class CartPage extends StatelessWidget {
     );
   }
 
-  Widget _buildTotalSection() {
+  Widget _buildTotalSection(CartProvider controller) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -138,7 +159,7 @@ class CartPage extends StatelessWidget {
                 ),
               ),
               Text(
-                'Rp ${_cartProvider.totalPrice.toStringAsFixed(0)}',
+                'Rp ${controller.totalPrice.toStringAsFixed(0)}',
                 style: AppTextStyles.heading2.copyWith(
                   color: AppColors.primary,
                 ),

@@ -18,28 +18,23 @@ class ProductDetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Detail Produk'),
+        title: Text(product.title),
       ),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Image.network(
-              product.image,
-              width: double.infinity,
-              height: 300,
-              fit: BoxFit.contain,
-              errorBuilder: (context, error, stackTrace) {
-                return Container(
-                  height: 300,
-                  color: Colors.grey[200],
-                  child: const Icon(
-                    Icons.image_not_supported,
-                    size: 50,
-                    color: Colors.grey,
-                  ),
-                );
-              },
+            AspectRatio(
+              aspectRatio: 1,
+              child: Image.network(
+                product.image,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return const Center(
+                    child: Icon(Icons.error_outline, size: 48),
+                  );
+                },
+              ),
             ),
             Padding(
               padding: const EdgeInsets.all(16),
@@ -69,36 +64,30 @@ class ProductDetailPage extends StatelessWidget {
                           ),
                         ),
                       ),
-                      const Spacer(),
-                      Row(
-                        children: [
-                          const Icon(
-                            Icons.star,
-                            color: Colors.amber,
-                            size: 20,
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            '${product.rating.rate} (${product.rating.count})',
-                            style: AppTextStyles.body1,
-                          ),
-                        ],
+                      const SizedBox(width: 8),
+                      Icon(
+                        Icons.star,
+                        color: Colors.amber,
+                        size: 16,
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        product.rating.rate.toString(),
+                        style: AppTextStyles.body2,
                       ),
                     ],
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    product.formattedPrice,
+                    'Rp ${product.price.toStringAsFixed(0)}',
                     style: AppTextStyles.heading1.copyWith(
                       color: AppColors.primary,
                     ),
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    'Deskripsi',
-                    style: AppTextStyles.subtitle1.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+                    'Description',
+                    style: AppTextStyles.subtitle1,
                   ),
                   const SizedBox(height: 8),
                   Text(
@@ -111,26 +100,26 @@ class ProductDetailPage extends StatelessWidget {
           ],
         ),
       ),
-      bottomNavigationBar: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: ElevatedButton(
-            onPressed: () {
-              _cartProvider.addToCart(product);
-              Get.snackbar(
-                'Berhasil',
-                '${product.title} ditambahkan ke keranjang',
-                snackPosition: SnackPosition.BOTTOM,
-                backgroundColor: Colors.green,
-                colorText: Colors.white,
-              );
-            },
-            style: ElevatedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(vertical: 16),
+      bottomNavigationBar: GetBuilder<CartProvider>(
+        builder: (controller) {
+          return SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: ElevatedButton(
+                onPressed: () {
+                  controller.addToCart(product);
+                  Get.back();
+                  Get.snackbar(
+                    'Success',
+                    'Product added to cart',
+                    snackPosition: SnackPosition.BOTTOM,
+                  );
+                },
+                child: const Text('Add to Cart'),
+              ),
             ),
-            child: const Text('Tambah ke Keranjang'),
-          ),
-        ),
+          );
+        },
       ),
     );
   }

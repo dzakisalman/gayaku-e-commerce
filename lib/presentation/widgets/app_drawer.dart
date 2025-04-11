@@ -23,32 +23,38 @@ class AppDrawer extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Obx(() {
-                    final user = _authProvider.currentUser.value;
-                    return CircleAvatar(
-                      radius: 40,
-                      backgroundColor: AppColors.white,
-                      child: Text(
-                        user?.displayName?.substring(0, 1).toUpperCase() ?? 'U',
-                        style: AppTextStyles.heading1.copyWith(color: AppColors.primary),
-                      ),
-                    );
-                  }),
+                  GetBuilder<AuthProvider>(
+                    builder: (controller) {
+                      final user = controller.currentUser.value;
+                      return CircleAvatar(
+                        radius: 40,
+                        backgroundColor: AppColors.white,
+                        child: Text(
+                          user?.displayName?.substring(0, 1).toUpperCase() ?? 'U',
+                          style: AppTextStyles.heading1.copyWith(color: AppColors.primary),
+                        ),
+                      );
+                    },
+                  ),
                   const SizedBox(height: 8),
-                  Obx(() {
-                    final user = _authProvider.currentUser.value;
-                    return Text(
-                      user?.displayName ?? 'User',
-                      style: AppTextStyles.subtitle1.copyWith(color: AppColors.white),
-                    );
-                  }),
-                  Obx(() {
-                    final user = _authProvider.currentUser.value;
-                    return Text(
-                      user?.email ?? '',
-                      style: AppTextStyles.body2.copyWith(color: AppColors.white.withOpacity(0.8)),
-                    );
-                  }),
+                  GetBuilder<AuthProvider>(
+                    builder: (controller) {
+                      final user = controller.currentUser.value;
+                      return Text(
+                        user?.displayName ?? 'User',
+                        style: AppTextStyles.subtitle1.copyWith(color: AppColors.white),
+                      );
+                    },
+                  ),
+                  GetBuilder<AuthProvider>(
+                    builder: (controller) {
+                      final user = controller.currentUser.value;
+                      return Text(
+                        user?.email ?? '',
+                        style: AppTextStyles.body2.copyWith(color: AppColors.white.withOpacity(0.8)),
+                      );
+                    },
+                  ),
                 ],
               ),
             ),
