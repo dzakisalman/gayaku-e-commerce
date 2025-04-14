@@ -6,6 +6,7 @@ import 'package:gayaku/core/theme/app_theme.dart';
 import 'package:gayaku/presentation/providers/auth_provider.dart';
 import 'package:gayaku/presentation/providers/cart_provider.dart';
 import 'package:gayaku/presentation/providers/product_provider.dart';
+import 'package:gayaku/presentation/providers/wishlist_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -14,6 +15,7 @@ void main() async {
   Get.put(AuthProvider());
   Get.put(ProductProvider());
   Get.put(CartProvider());
+  Get.put(WishlistProvider());
   
   runApp(const MyApp());
 }

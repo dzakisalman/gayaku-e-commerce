@@ -12,6 +12,7 @@ import 'package:gayaku/presentation/providers/cart_provider.dart';
 import 'package:gayaku/presentation/providers/wishlist_provider.dart';
 import 'package:gayaku/presentation/pages/wishlist/wishlist_page.dart';
 import 'package:gayaku/presentation/routes/routes.dart';
+import 'package:gayaku/presentation/providers/product_provider.dart';
 // import 'package:flutter/material.dart';
 
 part 'app_routes.dart';
@@ -35,23 +36,27 @@ class AppPages {
       name: Routes.HOME,
       page: () => HomePage(),
       binding: BindingsBuilder(() {
-        Get.put(CartProvider());
+        Get.put(ProductProvider());
         Get.put(WishlistProvider());
+        Get.put(CartProvider());
       }),
     ),
     GetPage(
       name: Routes.PRODUCT_DETAIL,
-      page: () => ProductDetailPage(
-        product: Get.arguments,
-      ),
+      page: () => ProductDetailPage(product: Get.arguments),
       binding: BindingsBuilder(() {
-        Get.put(CartProvider());
+        Get.put(ProductProvider());
         Get.put(WishlistProvider());
+        Get.put(CartProvider());
       }),
     ),
     GetPage(
       name: Routes.CART,
       page: () => CartPage(),
+      binding: BindingsBuilder(() {
+        Get.put(CartProvider());
+        Get.put(WishlistProvider());
+      }),
     ),
     GetPage(
       name: Routes.CHECKOUT,
@@ -60,6 +65,10 @@ class AppPages {
     GetPage(
       name: Routes.PROFILE,
       page: () => ProfilePage(),
+      binding: BindingsBuilder(() {
+        Get.put(AuthProvider());
+        Get.put(WishlistProvider());
+      }),
     ),
     GetPage(
       name: Routes.WISHLIST,

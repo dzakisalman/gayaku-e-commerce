@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:gayaku/core/routes/app_pages.dart';
 import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:gayaku/presentation/providers/wishlist_provider.dart';
+import 'package:gayaku/presentation/providers/cart_provider.dart';
 
 class AuthProvider extends GetxController {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -53,6 +55,10 @@ class AuthProvider extends GetxController {
       await userCredential.user?.updateDisplayName(displayName);
       this.displayName.value = displayName;
       
+      // Reinitialize providers after successful registration
+      Get.put(CartProvider());
+      Get.put(WishlistProvider());
+      
       Get.offAllNamed('/home');
       Get.snackbar(
         'Berhasil',
@@ -95,7 +101,12 @@ class AuthProvider extends GetxController {
         email: email,
         password: password,
       );
-      Get.offAllNamed('/home');
+      
+      // Reinitialize providers after successful login
+      Get.put(CartProvider());
+      Get.put(WishlistProvider());
+      
+      Get.offAllNamed(Routes.HOME);
       Get.snackbar(
         'Berhasil',
         'Login berhasil',
@@ -138,6 +149,11 @@ class AuthProvider extends GetxController {
       displayName.value = '';
       photoURL.value = '';
       email.value = '';
+      
+      // Clean up providers
+      Get.delete<WishlistProvider>();
+      Get.delete<CartProvider>();
+      
       Get.offAllNamed(Routes.LOGIN);
     } catch (e) {
       error.value = e.toString();
