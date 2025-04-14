@@ -111,3 +111,9 @@ flutter:
           weight: 700
         - asset: assets/fonts/metropolis/Metropolis-Medium.otf
           weight: 500
+    - family: Metropolis-SemiBold
+      fonts:
+        - asset: assets/fonts/metropolis/Metropolis-SemiBold.otf
+    - family: Metropolis-Regular
+      fonts:
+        - asset: assets/fonts/metropolis/Metropolis-Regular.otf
