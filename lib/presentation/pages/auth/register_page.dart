@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../../core/routes/app_pages.dart';
 import '../../providers/auth_provider.dart';
 
 class RegisterPage extends StatelessWidget {
@@ -16,38 +18,46 @@ class RegisterPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFF9F9F9),
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          onPressed: () => Get.back(),
+        ),
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24),
           child: Form(
             key: _formKey,
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(height: 48),
-                Image.asset(
-                  'assets/logo.png',
-                  height: 120,
-                  width: 120,
-                ),
-                const SizedBox(height: 32),
                 Text(
-                  'Create Account',
-                  style: AppTextStyles.heading1,
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'Sign up to get started',
-                  style: AppTextStyles.body1.copyWith(color: AppColors.textSecondary),
-                  textAlign: TextAlign.center,
+                  'Sign up',
+                  style: const TextStyle(
+                    fontFamily: 'Metropolis',
+                    fontSize: 34,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
                 const SizedBox(height: 32),
                 TextFormField(
                   controller: _nameController,
+                  style: const TextStyle(
+                    fontFamily: 'Metropolis',
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                  ),
                   decoration: const InputDecoration(
-                    labelText: 'Full Name',
-                    prefixIcon: Icon(Icons.person_outline),
+                    labelText: 'Name',
+                    labelStyle: TextStyle(
+                      fontFamily: 'Metropolis',
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -59,9 +69,18 @@ class RegisterPage extends StatelessWidget {
                 const SizedBox(height: 16),
                 TextFormField(
                   controller: _emailController,
+                  style: const TextStyle(
+                    fontFamily: 'Metropolis',
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                  ),
                   decoration: const InputDecoration(
                     labelText: 'Email',
-                    prefixIcon: Icon(Icons.email_outlined),
+                    labelStyle: TextStyle(
+                      fontFamily: 'Metropolis',
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                   keyboardType: TextInputType.emailAddress,
                   validator: (value) {
@@ -77,61 +96,127 @@ class RegisterPage extends StatelessWidget {
                 const SizedBox(height: 16),
                 TextFormField(
                   controller: _passwordController,
+                  style: const TextStyle(
+                    fontFamily: 'Metropolis',
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                  ),
                   decoration: const InputDecoration(
                     labelText: 'Password',
-                    prefixIcon: Icon(Icons.lock_outline),
+                    labelStyle: TextStyle(
+                      fontFamily: 'Metropolis',
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                   obscureText: true,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter your password';
                     }
-                    if (value.length < 6) {
-                      return 'Password must be at least 6 characters';
-                    }
                     return null;
                   },
                 ),
-                const SizedBox(height: 24),
-                Obx(() => ElevatedButton(
-                  onPressed: _authProvider.isLoading.value
-                      ? null
-                      : () {
-                          if (_formKey.currentState!.validate()) {
-                            _authProvider.registerUser(
-                              _emailController.text,
-                              _passwordController.text,
-                              _nameController.text,
-                            );
-                          }
-                        },
-                  child: _authProvider.isLoading.value
-                      ? const SizedBox(
-                          height: 20,
-                          width: 20,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                          ),
-                        )
-                      : const Text('Sign Up'),
-                )),
-                const SizedBox(height: 16),
-                TextButton(
-                  onPressed: () => Get.back(),
-                  child: RichText(
-                    text: TextSpan(
-                      text: 'Already have an account? ',
-                      style: AppTextStyles.body2.copyWith(color: AppColors.textSecondary),
+                const SizedBox(height: 8),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: TextButton(
+                    onPressed: () => Get.toNamed(Routes.LOGIN),
+                    style: TextButton.styleFrom(
+                      padding: EdgeInsets.zero,
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        TextSpan(
-                          text: 'Sign In',
-                          style: AppTextStyles.body2.copyWith(
-                            color: AppColors.primary,
-                            fontWeight: FontWeight.bold,
+                        Text(
+                          'Already have an account?',
+                          style: const TextStyle(
+                            fontFamily: 'Metropolis',
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.red,
+                          ),
+                        ),
+                        const SizedBox(width: 4),
+                        SvgPicture.asset(
+                          'assets/arrow_right.svg',
+                          colorFilter: const ColorFilter.mode(
+                            Colors.red,
+                            BlendMode.srcIn,
                           ),
                         ),
                       ],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 24),
+                SizedBox(
+                  width: double.infinity,
+                  height: 48,
+                  child: Obx(
+                    () => ElevatedButton(
+                      onPressed: _authProvider.isLoading.value
+                          ? null
+                          : () {
+                              if (_formKey.currentState!.validate()) {
+                                _authProvider.registerUser(
+                                  _emailController.text,
+                                  _passwordController.text,
+                                  _nameController.text,
+                                );
+                              }
+                            },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.red,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      child: _authProvider.isLoading.value
+                          ? const CircularProgressIndicator(color: Colors.white)
+                          : const Text(
+                              'SIGN UP',
+                              style: TextStyle(
+                                fontFamily: 'Metropolis',
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.white,
+                              ),
+                            ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 32),
+                Center(
+                  child: Text(
+                    'Or sign up with Google',
+                    style: const TextStyle(
+                      fontFamily: 'Metropolis',
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Center(
+                  child: Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(8),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.1),
+                          spreadRadius: 1,
+                          blurRadius: 1,
+                          offset: const Offset(0, 1),
+                        ),
+                      ],
+                    ),
+                    child: SvgPicture.asset(
+                      'assets/google.svg',
+                      height: 24,
+                      width: 24,
                     ),
                   ),
                 ),

@@ -1,5 +1,4 @@
 import 'package:get/get.dart';
-import 'package:gayaku/data/models/product_model.dart';
 import 'package:gayaku/presentation/pages/auth/login_page.dart';
 import 'package:gayaku/presentation/pages/auth/register_page.dart';
 import 'package:gayaku/presentation/pages/cart/cart_page.dart';
@@ -7,15 +6,23 @@ import 'package:gayaku/presentation/pages/checkout/checkout_page.dart';
 import 'package:gayaku/presentation/pages/home/home_page.dart';
 import 'package:gayaku/presentation/pages/product/product_detail_page.dart';
 import 'package:gayaku/presentation/pages/profile/profile_page.dart';
+import 'package:gayaku/presentation/pages/wishlist/wishlist_page.dart';
 import 'package:gayaku/presentation/providers/auth_provider.dart';
 import 'package:gayaku/presentation/providers/cart_provider.dart';
-import 'package:gayaku/presentation/providers/wishlist_provider.dart';
-import 'package:gayaku/presentation/pages/wishlist/wishlist_page.dart';
-import 'package:gayaku/presentation/routes/routes.dart';
 import 'package:gayaku/presentation/providers/product_provider.dart';
+import 'package:gayaku/presentation/providers/wishlist_provider.dart';
 // import 'package:flutter/material.dart';
 
-part 'app_routes.dart';
+abstract class Routes {
+  static const LOGIN = '/login';
+  static const REGISTER = '/register';
+  static const HOME = '/home';
+  static const PRODUCT_DETAIL = '/product-detail';
+  static const CART = '/cart';
+  static const CHECKOUT = '/checkout';
+  static const PROFILE = '/profile';
+  static const WISHLIST = '/wishlist';
+}
 
 class AppPages {
   static const INITIAL = Routes.LOGIN;
@@ -72,7 +79,7 @@ class AppPages {
     ),
     GetPage(
       name: Routes.WISHLIST,
-      page: () => const WishlistPage(),
+      page: () => WishlistPage(),
       binding: BindingsBuilder(() {
         Get.put(WishlistProvider());
       }),
