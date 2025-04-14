@@ -4,10 +4,12 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../data/models/product_model.dart';
 import '../../providers/cart_provider.dart';
+import '../../providers/wishlist_provider.dart';
 
 class ProductDetailPage extends StatelessWidget {
   final ProductModel product;
   final _cartProvider = Get.find<CartProvider>();
+  final _wishlistProvider = Get.find<WishlistProvider>();
 
   ProductDetailPage({
     super.key,
@@ -19,6 +21,20 @@ class ProductDetailPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(product.title),
+        actions: [
+          GetBuilder<WishlistProvider>(
+            builder: (controller) {
+              final isInWishlist = controller.isInWishlist(product);
+              return IconButton(
+                icon: Icon(
+                  isInWishlist ? Icons.favorite : Icons.favorite_border,
+                  color: isInWishlist ? Colors.red : Colors.white,
+                ),
+                onPressed: () => controller.toggleWishlist(product),
+              );
+            },
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(

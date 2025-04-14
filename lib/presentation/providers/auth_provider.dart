@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gayaku/core/routes/app_pages.dart';
 import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -131,16 +132,18 @@ class AuthProvider extends GetxController {
 
   Future<void> logout() async {
     try {
+      isLoading.value = true;
       await _auth.signOut();
-      Get.offAllNamed('/login');
+      currentUser.value = null;
+      displayName.value = '';
+      photoURL.value = '';
+      email.value = '';
+      Get.offAllNamed(Routes.LOGIN);
     } catch (e) {
-      Get.snackbar(
-        'Error',
-        'Gagal logout. Silakan coba lagi.',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
+      error.value = e.toString();
+      rethrow;
+    } finally {
+      isLoading.value = false;
     }
   }
 

@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:gayaku/core/theme/app_colors.dart';
 import 'package:gayaku/core/theme/app_text_styles.dart';
 import 'package:gayaku/presentation/providers/auth_provider.dart';
+import 'package:gayaku/presentation/routes/routes.dart';
 
 class AppDrawer extends StatelessWidget {
   final _authProvider = Get.find<AuthProvider>();
@@ -29,10 +30,19 @@ class AppDrawer extends StatelessWidget {
                       return CircleAvatar(
                         radius: 40,
                         backgroundColor: AppColors.white,
-                        child: Text(
-                          user?.displayName?.substring(0, 1).toUpperCase() ?? 'U',
-                          style: AppTextStyles.heading1.copyWith(color: AppColors.primary),
-                        ),
+                        child: user?.photoURL != null
+                            ? ClipOval(
+                                child: Image.network(
+                                  user!.photoURL!,
+                                  width: 60,
+                                  height: 60,
+                                  fit: BoxFit.cover,
+                                ),
+                              )
+                            : Text(
+                                user?.displayName?.substring(0, 1).toUpperCase() ?? 'G',
+                                style: AppTextStyles.heading1.copyWith(color: AppColors.primary),
+                              ),
                       );
                     },
                   ),
@@ -41,7 +51,7 @@ class AppDrawer extends StatelessWidget {
                     builder: (controller) {
                       final user = controller.currentUser.value;
                       return Text(
-                        user?.displayName ?? 'User',
+                        user?.displayName ?? 'Guest',
                         style: AppTextStyles.subtitle1.copyWith(color: AppColors.white),
                       );
                     },
@@ -68,7 +78,15 @@ class AppDrawer extends StatelessWidget {
                   title: const Text('Home'),
                   onTap: () {
                     Get.back();
-                    Get.offAllNamed('/home');
+                    Get.offAllNamed(Routes.HOME);
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.favorite),
+                  title: const Text('Wishlist'),
+                  onTap: () {
+                    Get.back();
+                    Get.toNamed(Routes.WISHLIST);
                   },
                 ),
                 ListTile(
@@ -76,7 +94,7 @@ class AppDrawer extends StatelessWidget {
                   title: const Text('Cart'),
                   onTap: () {
                     Get.back();
-                    Get.toNamed('/cart');
+                    Get.toNamed(Routes.CART);
                   },
                 ),
                 ListTile(
@@ -84,16 +102,25 @@ class AppDrawer extends StatelessWidget {
                   title: const Text('Profile'),
                   onTap: () {
                     Get.back();
-                    Get.toNamed('/profile');
+                    Get.toNamed(Routes.PROFILE);
                   },
                 ),
                 const Divider(),
                 ListTile(
                   leading: const Icon(Icons.logout),
                   title: const Text('Logout'),
-                  onTap: () {
-                    Get.back();
-                    _authProvider.logout();
+                  onTap: () async {
+                    try {
+                      await _authProvider.logout();
+                    } catch (e) {
+                      Get.snackbar(
+                        'Error',
+                        'Failed to sign out: ${e.toString()}',
+                        snackPosition: SnackPosition.BOTTOM,
+                        backgroundColor: Colors.red,
+                        colorText: Colors.white,
+                      );
+                    }
                   },
                 ),
               ],

@@ -9,6 +9,9 @@ import 'package:gayaku/presentation/pages/product/product_detail_page.dart';
 import 'package:gayaku/presentation/pages/profile/profile_page.dart';
 import 'package:gayaku/presentation/providers/auth_provider.dart';
 import 'package:gayaku/presentation/providers/cart_provider.dart';
+import 'package:gayaku/presentation/providers/wishlist_provider.dart';
+import 'package:gayaku/presentation/pages/wishlist/wishlist_page.dart';
+import 'package:gayaku/presentation/routes/routes.dart';
 // import 'package:flutter/material.dart';
 
 part 'app_routes.dart';
@@ -33,14 +36,18 @@ class AppPages {
       page: () => HomePage(),
       binding: BindingsBuilder(() {
         Get.put(CartProvider());
+        Get.put(WishlistProvider());
       }),
     ),
     GetPage(
       name: Routes.PRODUCT_DETAIL,
-      page: () {
-        final product = Get.arguments as ProductModel;
-        return ProductDetailPage(product: product);
-      },
+      page: () => ProductDetailPage(
+        product: Get.arguments,
+      ),
+      binding: BindingsBuilder(() {
+        Get.put(CartProvider());
+        Get.put(WishlistProvider());
+      }),
     ),
     GetPage(
       name: Routes.CART,
@@ -53,6 +60,13 @@ class AppPages {
     GetPage(
       name: Routes.PROFILE,
       page: () => ProfilePage(),
+    ),
+    GetPage(
+      name: Routes.WISHLIST,
+      page: () => const WishlistPage(),
+      binding: BindingsBuilder(() {
+        Get.put(WishlistProvider());
+      }),
     ),
   ];
 }

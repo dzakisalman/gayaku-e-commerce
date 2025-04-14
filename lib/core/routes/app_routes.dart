@@ -1,6 +1,6 @@
 part of 'app_pages.dart';
 
-class Routes {
+abstract class Routes {
   static const LOGIN = '/login';
   static const REGISTER = '/register';
   static const HOME = '/home';
@@ -8,4 +8,5 @@ class Routes {
   static const CART = '/cart';
   static const CHECKOUT = '/checkout';
   static const PROFILE = '/profile';
+  static const WISHLIST = '/wishlist';
 } 
