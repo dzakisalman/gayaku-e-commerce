@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import '../../../core/theme/app_colors.dart';
-import '../../../core/theme/app_text_styles.dart';
 import '../../../core/routes/app_pages.dart';
 import '../../providers/auth_provider.dart';
 
@@ -35,9 +33,9 @@ class RegisterPage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
+                const Text(
                   'Sign up',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontFamily: 'Metropolis',
                     fontSize: 34,
                     fontWeight: FontWeight.w700,
@@ -128,9 +126,9 @@ class RegisterPage extends StatelessWidget {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text(
+                        const Text(
                           'Already have an account?',
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontFamily: 'Metropolis',
                             fontSize: 14,
                             fontWeight: FontWeight.w500,
@@ -155,7 +153,7 @@ class RegisterPage extends StatelessWidget {
                   height: 48,
                   child: Obx(
                     () => ElevatedButton(
-                      onPressed: _authProvider.isLoading.value
+                      onPressed: _authProvider.isLoading
                           ? null
                           : () {
                               if (_formKey.currentState!.validate()) {
@@ -172,7 +170,7 @@ class RegisterPage extends StatelessWidget {
                           borderRadius: BorderRadius.circular(8),
                         ),
                       ),
-                      child: _authProvider.isLoading.value
+                      child: _authProvider.isLoading
                           ? const CircularProgressIndicator(color: Colors.white)
                           : const Text(
                               'SIGN UP',
@@ -187,10 +185,10 @@ class RegisterPage extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 32),
-                Center(
+                const Center(
                   child: Text(
                     'Or sign up with Google',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontFamily: 'Metropolis',
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
@@ -206,17 +204,20 @@ class RegisterPage extends StatelessWidget {
                       borderRadius: BorderRadius.circular(8),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.grey.withOpacity(0.1),
+                          color: Colors.grey.withOpacity(0.26),
                           spreadRadius: 1,
                           blurRadius: 1,
                           offset: const Offset(0, 1),
                         ),
                       ],
                     ),
-                    child: SvgPicture.asset(
-                      'assets/google.svg',
-                      height: 24,
-                      width: 24,
+                    child: GestureDetector(
+                      onTap: () => _authProvider.signInWithGoogle(),
+                      child: SvgPicture.asset(
+                        'assets/google.svg',
+                        height: 24,
+                        width: 24,
+                      ),
                     ),
                   ),
                 ),
