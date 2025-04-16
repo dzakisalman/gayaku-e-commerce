@@ -4,7 +4,6 @@ import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text_styles.dart';
 import '../../data/models/product_model.dart';
 import 'package:gayaku/presentation/providers/cart_provider.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import '../providers/wishlist_provider.dart';
 import '../routes/routes.dart';
 
@@ -39,13 +38,16 @@ class ProductCard extends StatelessWidget {
                 SizedBox(
                   width: double.infinity,
                   height: 160,
-                  child: CachedNetworkImage(
-                    imageUrl: product.image,
+                  child: Image.network(
+                    product.image,
                     fit: BoxFit.cover,
-                    placeholder: (context, url) => const Center(
-                      child: CircularProgressIndicator(),
-                    ),
-                    errorWidget: (context, url, error) => const Center(
+                    loadingBuilder: (context, child, loadingProgress) {
+                      if (loadingProgress == null) return child;
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    },
+                    errorBuilder: (context, error, stackTrace) => const Center(
                       child: Icon(Icons.error_outline, size: 48),
                     ),
                   ),

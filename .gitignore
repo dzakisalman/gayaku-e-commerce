@@ -49,3 +49,6 @@ GoogleService-Info.plist
 firebase.json
 lib/firebase_options.dart
 .env
+
+# FVM Version Cache
+.fvm/
