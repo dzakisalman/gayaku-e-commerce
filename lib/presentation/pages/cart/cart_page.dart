@@ -18,6 +18,43 @@ class CartPage extends StatelessWidget {
       ),
       body: GetBuilder<CartProvider>(
         builder: (controller) {
+          if (controller.isLoading.value) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+
+          if (controller.error.isNotEmpty) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(
+                    Icons.error_outline,
+                    size: 64,
+                    color: Colors.red,
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Error',
+                    style: AppTextStyles.subtitle1.copyWith(color: Colors.red),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    controller.error.value,
+                    style: AppTextStyles.body2,
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () => controller.loadCart(),
+                    child: const Text('Retry'),
+                  ),
+                ],
+              ),
+            );
+          }
+
           if (controller.items.isEmpty) {
             return Center(
               child: Column(
