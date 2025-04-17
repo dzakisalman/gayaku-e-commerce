@@ -26,8 +26,17 @@ class AuthProvider extends GetxController {
   void onInit() {
     super.onInit();
     _user.value = _auth.currentUser;
+    currentUser.value = _auth.currentUser;
+    
+    if (_auth.currentUser != null) {
+      displayName.value = _auth.currentUser?.displayName ?? '';
+      photoURL.value = _auth.currentUser?.photoURL ?? '';
+      email.value = _auth.currentUser?.email ?? '';
+    }
+    
     _auth.authStateChanges().listen((User? user) {
       _user.value = user;
+      currentUser.value = user;
       if (user != null) {
         displayName.value = user.displayName ?? '';
         photoURL.value = user.photoURL ?? '';
@@ -214,10 +223,16 @@ class AuthProvider extends GetxController {
   Future<void> loginUser(String email, String password) async {
     try {
       _isLoading.value = true;
-      await _auth.signInWithEmailAndPassword(
+      final userCredential = await _auth.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
+      
+      // Update user data after successful login
+      currentUser.value = userCredential.user;
+      displayName.value = userCredential.user?.displayName ?? '';
+      photoURL.value = userCredential.user?.photoURL ?? '';
+      this.email.value = userCredential.user?.email ?? '';
       
       // Reinitialize providers after successful login
       Get.put(CartProvider());
